@@ -5,6 +5,7 @@ import Mail from "@mui/icons-material/Mail";
 import { Avatar, Box, Divider, Grid, Paper, styled, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { use } from "react";
+import Date from "~/components/Date";
 import PasswordViewer from "~/components/PasswordViewer";
 import { useDialog, withDialogProvider } from "~/context/dialog/Context";
 import GetPassword from "~/services/vault/queries/GetPassword";
@@ -75,7 +76,7 @@ function Password({
               <DateRange color="primary" />
               <Box ml={2} display="flex" flexDirection="column">
                 <Typography variant="caption">Created At</Typography>
-                <Typography>{password?.data?.createdAt}</Typography>
+                <Date date={password?.data?.createdAt ?? ""} />
               </Box>
             </Box>
 
@@ -83,7 +84,7 @@ function Password({
               <DateRange color="primary" />
               <Box ml={2} display="flex" flexDirection="column">
                 <Typography variant="caption">Updated At</Typography>
-                <Typography>{password?.data?.updatedAt}</Typography>
+                <Date date={password?.data?.updatedAt ?? ""} />
               </Box>
             </Box>
           </Container>

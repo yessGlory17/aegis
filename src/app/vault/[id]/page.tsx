@@ -23,6 +23,7 @@ import GetPasswords, {
 } from "~/services/vault/queries/GetPasswords";
 import GetVault, { GET_VAULT_KEY } from "~/services/vault/queries/GetVault";
 import CreatePasswordModal from "./_tools/CreatePasswordModal";
+import Date from "~/components/Date";
 
 function Vault({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -121,8 +122,8 @@ function Vault({ params }: { params: Promise<{ id: string }> }) {
                       <Link color="primary" href={`/vault/${id}/${row.id}`}>{row.title}</Link>
                     </TableCell>
                     <TableCell align="left">{row.service}</TableCell>
-                    <TableCell align="left">{row.createdAt}</TableCell>
-                    <TableCell align="left">{row.createdAt}</TableCell>
+                    <TableCell align="left"><Date date={row.createdAt} /></TableCell>
+                    <TableCell align="left"><Date date={row.updatedAt} /></TableCell>
                   </TableRow>
                 ))}
             </TableBody>

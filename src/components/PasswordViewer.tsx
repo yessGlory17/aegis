@@ -3,7 +3,9 @@ import Key from "@mui/icons-material/Key";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Box, IconButton, Typography } from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import decrypt, { DECRYPT_MUTATION_KEY } from "~/services/vault/mutations/Decrypt";
 
 type PasswordViewerProps = {
     vaultID: string;
@@ -14,23 +16,20 @@ function PasswordViewer({ vaultID, passwordID }: PasswordViewerProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [decrypted, setDecrypted] = useState<string | null>(null);
 
+  const decryptMutation = useMutation({
+    mutationKey:[DECRYPT_MUTATION_KEY],
+    mutationFn: decrypt,
+    onSuccess(data) {
+      setDecrypted(data?.data?.password)
+    },
+  })
+
   const handleClick = async () => {
     if(open){
         setOpen(!open)
     }else{
         setOpen(!open)
-        const res = await fetch(`/api/vault/${vaultID}/password/${passwordID}/decrypt`, {
-            method:"POST",
-            body: JSON.stringify({
-                vault: vaultID,
-                password: passwordID
-            })
-        })
-        const response = await res.json();
-
-        console.log("DECRTYPED DATA: ", response?.data?.password);
-        setDecrypted(response?.data?.password);
-
+        await decryptMutation.mutate({ vaultID, passwordID });
     }
   }
 
@@ -44,7 +43,7 @@ function PasswordViewer({ vaultID, passwordID }: PasswordViewerProps) {
         </Box>
       </Box>
 
-      <IconButton onClick={handleClick}>
+      <IconButton loading={decryptMutation.isPending} onClick={handleClick}>
         {open ? <VisibilityOffIcon/> : <VisibilityIcon color="warning" />}
       </IconButton>
     </Box>
