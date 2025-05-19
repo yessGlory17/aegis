@@ -9,18 +9,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
-import login, { LOGIN_MUTATION_KEY } from "~/services/task/mutations/Login";
+import login, { LOGIN_MUTATION_KEY } from "~/services/user/mutation/Login";
 
 function Login() {
   const [email, setEmail] = useState<string>("");
 
   const [password, setPassword] = useState<string>("");
-
-  const loginMutation = useMutation({
-    mutationKey: [LOGIN_MUTATION_KEY],
-    mutationFn: login,
-  });
 
   return (
     <Box
@@ -62,8 +58,19 @@ function Login() {
         <Button
           fullWidth
           variant="contained"
-          loading={loginMutation.isPending}
-          onClick={() => loginMutation.mutate({ email, password })}
+          onClick={async (event) => {
+            event.preventDefault();
+            try{
+              await signIn("credentials",{
+                email,
+                password,
+                redirect: true,
+                callbackUrl:"/vault"
+              })
+            }catch(error){
+              console.error("AUTH FAILED: ", error)
+            }
+          }}
         >
           Sign in
         </Button>

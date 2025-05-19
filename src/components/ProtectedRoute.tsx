@@ -17,13 +17,11 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     console.log("SESSION LOG: ", session, path);
     if (session.status === "unauthenticated") {
       console.log("REDIRECTING...");
-      //   redirect("/login");
       router.replace("/login");
     }
 
     if (session.status === "authenticated" && path === "/login") {
-      // redirect("/tasks");
-      router.replace("/tasks");
+      router.replace("/vault");
     }
   }, [session, router]);
 
