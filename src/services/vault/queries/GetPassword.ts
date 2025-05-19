@@ -5,8 +5,9 @@ export type Data = {
   title: string;
   service: string;
   username: string;
-  password: string;
   vault: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 type GetPasswordsResponse = ApiResponse & {

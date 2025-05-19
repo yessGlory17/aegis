@@ -1,39 +1,28 @@
 "use client";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Avatar,
   Box,
-  Breadcrumbs,
   Button,
   Divider,
-  Grid,
-  IconButton,
   Link,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Paper,
-  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
+  Typography
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { use, useMemo } from "react";
-import GetVault, { GET_VAULT_KEY } from "~/services/vault/queries/GetVault";
-import AddIcon from "@mui/icons-material/Add";
 import { useDialog, withDialogProvider } from "~/context/dialog/Context";
-import CreatePasswordModal from "./_tools/CreatePasswordModal";
 import GetPasswords, {
   GET_PASSWORDS_KEY,
 } from "~/services/vault/queries/GetPasswords";
-import KeyIcon from "@mui/icons-material/Key";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import GetVault, { GET_VAULT_KEY } from "~/services/vault/queries/GetVault";
+import CreatePasswordModal from "./_tools/CreatePasswordModal";
 
 function Vault({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -58,57 +47,6 @@ function Vault({ params }: { params: Promise<{ id: string }> }) {
       updatedAt: pass.updatedAt,
     }));
   }, [passwords]);
-
-  const columns: GridColDef[] = [
-    {
-      field: "ico",
-      width: 64,
-      renderHeader(params) {
-        return <></>;
-      },
-      renderCell(params) {
-        return (
-          <Avatar
-            src={`https://www.google.com/s2/favicons?domain=${params.row.service}&sz=128`}
-          />
-        );
-      },
-    },
-    {
-      field: "title",
-      headerName: "Title",
-      flex: 1,
-    },
-    {
-      field: "service",
-      headerName: "Service",
-      flex: 5,
-      renderCell(params) {
-        return (
-          <Box
-            display="flex"
-            height="100%"
-            flexDirection="row"
-            alignItems="center"
-          >
-            <Typography sx={({ palette }) => ({ color: palette.grey["500"] })}>
-              {params.value}
-            </Typography>
-          </Box>
-        );
-      },
-    },
-    {
-      field: "createdAt",
-      width: 200,
-      headerName: "Created At",
-    },
-    {
-      field: "updatedAt",
-      width: 200,
-      headerName: "Updated At",
-    },
-  ];
 
   return (
     <Box flexGrow={1}>
@@ -155,22 +93,6 @@ function Vault({ params }: { params: Promise<{ id: string }> }) {
       </Box>
       <Divider />
       <Box p={2} sx={{ width: "100%" }}>
-        {/* <DataGrid
-          rows={rows}
-          columns={columns}
-          disableRowSelectionOnClick
-          disableColumnFilter
-          disableColumnMenu
-          disableColumnResize
-          disableColumnSorting
-          sx={({ palette }) => ({
-            border: `1px solid ${palette.grey['200']}`,
-            padding:2,
-            "& > .MuiDataGrid-columnSeparator": {
-              display: "none",
-            },
-          })}
-        /> */}
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -195,7 +117,8 @@ function Vault({ params }: { params: Promise<{ id: string }> }) {
                       />
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {row.title}
+                      
+                      <Link color="primary" href={`/vault/${id}/${row.id}`}>{row.title}</Link>
                     </TableCell>
                     <TableCell align="left">{row.service}</TableCell>
                     <TableCell align="left">{row.createdAt}</TableCell>
@@ -208,53 +131,6 @@ function Vault({ params }: { params: Promise<{ id: string }> }) {
       </Box>
       <CreatePasswordModal id={id} />
     </Box>
-  );
-
-  return (
-    <Grid
-      size={3}
-      sx={({ palette }) => ({ border: `1px solid ${palette.grey["300"]}` })}
-      flexDirection="row"
-    >
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-        p={1}
-        border="1px solid green"
-      >
-        <Box border="1px solid red">
-          <Typography color="primary" variant="h6">
-            {data?.data?.title}
-          </Typography>
-          <Typography
-            sx={({ palette }) => ({ color: palette.grey["600"] })}
-            variant="body1"
-          >
-            {data?.data?.description}
-          </Typography>
-        </Box>
-        <IconButton onClick={openDialog}>
-          <AddIcon />
-        </IconButton>
-      </Box>
-      <List>
-        {passwords?.data?.map((pass) => (
-          <ListItem key={pass._id} disablePadding>
-            <ListItemButton href={`/vault/${pass.vault}/${pass._id}`}>
-              <ListItemIcon>
-                <Avatar
-                  src={`https://www.google.com/s2/favicons?domain=${pass.service}&sz=128`}
-                />
-              </ListItemIcon>
-              <ListItemText primary={pass.title} secondary={pass.service} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <CreatePasswordModal id={id} />
-    </Grid>
   );
 }
 

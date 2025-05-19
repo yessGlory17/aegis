@@ -1,29 +1,21 @@
 "use client";
-import {
-  Avatar,
-  Box,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from "@mui/material";
+import DateRange from "@mui/icons-material/DateRange";
+import Key from "@mui/icons-material/Key";
+import Mail from "@mui/icons-material/Mail";
+import { Avatar, Box, Divider, Grid, Paper, styled, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { use } from "react";
-import GetVault, { GET_VAULT_KEY } from "~/services/vault/queries/GetVault";
-import AddIcon from "@mui/icons-material/Add";
+import PasswordViewer from "~/components/PasswordViewer";
 import { useDialog, withDialogProvider } from "~/context/dialog/Context";
-import GetPasswords, {
-  GET_PASSWORDS_KEY,
-} from "~/services/vault/queries/GetPasswords";
-import KeyIcon from "@mui/icons-material/Key";
-import CreatePasswordModal from "../_tools/CreatePasswordModal";
 import GetPassword from "~/services/vault/queries/GetPassword";
+import { GET_PASSWORDS_KEY } from "~/services/vault/queries/GetPasswords";
 
-function Vault({
+const Container = styled(Paper)(({ theme }) => ({
+  border: `1px solid ${theme.palette.grey["200"]}`,
+  boxShadow: "none",
+}));
+
+function Password({
   params,
 }: {
   params: Promise<{ id: string; pass_id: string }>;
@@ -35,54 +27,112 @@ function Vault({
     queryKey: [GET_PASSWORDS_KEY],
     queryFn: () => GetPassword({ id, pass_id }),
   });
+  
 
   return (
-    <Grid
-      size={9}
-      sx={({ palette }) => ({ border: `1px solid ${palette.grey["300"]}` })}
-      flexDirection="row"
-    >
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-        p={1}
-        border="1px solid green"
-      >
-        <Box border="1px solid red">
-          <Typography color="primary" variant="h6">
-            {password?.data?.title}
-          </Typography>
-          <Typography
-            sx={({ palette }) => ({ color: palette.grey["600"] })}
-            variant="body1"
-          >
-            {password?.data?.service}
-          </Typography>
-        </Box>
-        <IconButton onClick={openDialog}>
-          <AddIcon />
-        </IconButton>
-      </Box>
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              {/* <KeyIcon
-                        sx={({ palette }) => ({ color: palette.grey["200"] })}
-                      /> */}
-              <Avatar
-                src={`https://www.google.com/s2/favicons?domain=${password?.data.service}&sz=1024`}
-              />
-            </ListItemIcon>
-            <ListItemText primary={password?.data.username} />
-          </ListItemButton>
-        </ListItem>
-      </List>
-      <CreatePasswordModal id={id} />
+    <Grid container>
+      <Grid size={12}>
+        <Container>
+          <Box p={3} display="flex" flexDirection="row" alignItems="center">
+            <Avatar
+              src={`https://www.google.com/s2/favicons?domain=${password?.data?.service}&sz=128`}
+            />
+            <Box ml={2} display="flex" flexDirection="column">
+              <Typography variant="caption">Title</Typography>
+              <Typography>{password?.data?.title}</Typography>
+            </Box>
+          </Box>
+        </Container>
+      </Grid>
+      <Grid container size={12} flexDirection="row">
+        <Grid size={6} padding={4}>
+          <Container>
+            <Box p={2} display="flex" flexDirection="row" alignItems="center">
+              <Mail color="primary" />
+              <Box ml={2} display="flex" flexDirection="column">
+                <Typography variant="caption">Email or Username</Typography>
+                <Typography>{password?.data?.username}</Typography>
+              </Box>
+            </Box>
+
+            <Divider sx={({ palette }) => ({ border:`1px solid ${palette.grey['200']}` })} />
+
+            <PasswordViewer vaultID={id} passwordID={pass_id} />
+          </Container>
+
+          <Container sx={{ mt: 2 }}>
+            <Box p={1} display="flex" flexDirection="row" alignItems="center">
+              <Mail color="primary" />
+              <Box ml={2} display="flex" flexDirection="column">
+                <Typography variant="caption">Service</Typography>
+                <Typography>{password?.data?.service}</Typography>
+              </Box>
+            </Box>
+          </Container>
+
+          <Container sx={{ mt: 2 }}>
+            <Box p={1} display="flex" flexDirection="row" alignItems="center">
+              <DateRange color="primary" />
+              <Box ml={2} display="flex" flexDirection="column">
+                <Typography variant="caption">Created At</Typography>
+                <Typography>{password?.data?.createdAt}</Typography>
+              </Box>
+            </Box>
+
+            <Box p={1} display="flex" flexDirection="row" alignItems="center">
+              <DateRange color="primary" />
+              <Box ml={2} display="flex" flexDirection="column">
+                <Typography variant="caption">Updated At</Typography>
+                <Typography>{password?.data?.updatedAt}</Typography>
+              </Box>
+            </Box>
+          </Container>
+        </Grid>
+        
+        <Grid size={6} padding={4}>
+          <Container>
+            <Box p={1} display="flex" flexDirection="row" alignItems="center">
+              <Mail color="primary" />
+              <Box ml={2} display="flex" flexDirection="column">
+                <Typography variant="caption">Email</Typography>
+                <Typography>{password?.data?.username}</Typography>
+              </Box>
+            </Box>
+
+            
+          </Container>
+
+          <Container sx={{ mt: 2 }}>
+            <Box p={1} display="flex" flexDirection="row" alignItems="center">
+              <Mail color="primary" />
+              <Box ml={2} display="flex" flexDirection="column">
+                <Typography variant="caption">Service</Typography>
+                <Typography>{password?.data?.service}</Typography>
+              </Box>
+            </Box>
+          </Container>
+
+          <Container sx={{ mt: 2 }}>
+            <Box p={1} display="flex" flexDirection="row" alignItems="center">
+              <DateRange color="primary" />
+              <Box ml={2} display="flex" flexDirection="column">
+                <Typography variant="caption">Created At</Typography>
+                <Typography>{password?.data?.createdAt}</Typography>
+              </Box>
+            </Box>
+
+            <Box p={1} display="flex" flexDirection="row" alignItems="center">
+              <DateRange color="primary" />
+              <Box ml={2} display="flex" flexDirection="column">
+                <Typography variant="caption">Updated At</Typography>
+                <Typography>{password?.data?.updatedAt}</Typography>
+              </Box>
+            </Box>
+          </Container>
+        </Grid>
+      </Grid>
     </Grid>
   );
 }
 
-export default withDialogProvider(Vault);
+export default withDialogProvider(Password);

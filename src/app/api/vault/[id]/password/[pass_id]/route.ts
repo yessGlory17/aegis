@@ -7,12 +7,12 @@ import { authOptions } from "~/app/api/auth/[...nextauth]/route";
 import { encrypt } from "~/lib/crypto";
 
 type Params = {
-  params: Promise<{ id: string; pass_id: string; }>;
+  params: Promise<{ id: string; pass_id: string }>;
 };
 
 export async function GET(request: Request, { params }: Params) {
   try {
-    const id = (await params).id;
+    const { id, pass_id } = await params;
 
     await connectToDatabase();
 
@@ -30,12 +30,23 @@ export async function GET(request: Request, { params }: Params) {
       );
     }
 
-    const results = await Password.findOne({ user: session.user.id, vault: id })
+    const password = await Password.findOne({
+      user: session.user.id,
+      vault: id,
+      _id: pass_id,
+    });
 
-    console.log("PASSWORDS :", results);
+    if (!password) {
+      return NextResponse.json({
+        status: "error",
+        message: "Password not found!",
+      });
+    }
+
+    console.log("PASSWORDS :", password);
 
     return NextResponse.json(
-      { status: "success", data: results },
+      { status: "success", data: password },
       { status: 200 }
     );
   } catch (error) {
